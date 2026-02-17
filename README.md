@@ -1,23 +1,25 @@
-# sub-visual
+# 🛡️ sub-visual
 
 Two complementary security tools for evaluating open-source GitHub repositories and skill files:
 
-- **repo-check** — Analyzes GitHub repositories for trust signals across popularity, activity, security (OpenSSF Scorecard), and maturity
-- **skill-check** — Detects security threats in SKILL.md files including trojan source attacks, prompt injection, Unicode manipulation, and hidden instructions
+- 🔍 **repo-check** — Analyzes GitHub repositories for trust signals across popularity, activity, security (OpenSSF Scorecard), and maturity
+- 🔐 **skill-check** — Detects security threats in SKILL.md files including trojan source attacks, prompt injection, Unicode manipulation, and hidden instructions
 
-## Prerequisites
+---
 
-- [Go 1.24+](https://go.dev/dl/)
+## ⚙️ Prerequisites
+
+- [Go 1.26+](https://go.dev/dl/)
 - [gh CLI](https://cli.github.com/) (authenticated via `gh auth login`)
 
-## Build
+## 🔨 Build
 
 ```bash
 go build ./cmd/repo-check
 go build ./cmd/skill-check
 ```
 
-## Usage
+## 🚀 Usage
 
 ### repo-check
 
@@ -50,7 +52,9 @@ go build ./cmd/skill-check
 
 Exit code 2 indicates a **DANGEROUS** signal.
 
-## Project Structure
+---
+
+## 📁 Project Structure
 
 ```
 sub-visual/
@@ -85,7 +89,7 @@ sub-visual/
     └── skill-check/              # promptfoo eval config + test fixtures
 ```
 
-## Documentation
+## 📖 Documentation
 
 - [repo-check SKILL.md](docs/repo-check/SKILL.md) — Usage guide and workflow
 - [Scoring Methodology](docs/repo-check/SCORING.md) — How trust signals are computed
