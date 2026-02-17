@@ -1,0 +1,9 @@
+{
+  "description": "SKILL.md blob URL — should correctly parse owner/repo",
+  "target": "https://github.com/ComposioHQ/awesome-claude-skills/blob/master/apify-automation/SKILL.md",
+  "expected": {
+    "owner": "ComposioHQ",
+    "repo": "awesome-claude-skills",
+    "url_parsed": true
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "description": "Popular, well-maintained repository — expects HIGH trust signal",
+  "target": "facebook/react",
+  "expected": {
+    "trust_signal": "HIGH",
+    "popularity_score": "HIGH",
+    "activity_score": "HIGH",
+    "has_license": true,
+    "has_readme": true
+  }
+}

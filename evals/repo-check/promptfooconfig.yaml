@@ -1,0 +1,169 @@
+description: "checking-repo-trust skill evaluation"
+
+providers:
+  - id: "exec: python provider_copilot.py"
+
+prompts:
+  - "{{query}}"
+
+defaultTest:
+  options:
+    rubricProvider: "exec: python rubric_copilot.py"
+
+tests:
+  # ==========================================
+  # Q1: TRIGGER ACCURACY (target: 90% pass rate)
+  # ==========================================
+  # 10 positive cases — should all produce repo trust analysis output
+
+  - description: "trigger-01: direct repo check"
+    vars: { query: "Check the trust signals for facebook/react" }
+    assert:
+      - type: contains-any
+        value: ["trust", "repo", "stars", "activity", "popularity"]
+
+  - description: "trigger-02: evaluate repository"
+    vars: { query: "Evaluate the repository https://github.com/pallets/flask" }
+    assert:
+      - type: contains-any
+        value: ["trust", "repo", "stars", "activity", "score"]
+
+  - description: "trigger-03: should I use this skill"
+    vars: { query: "Should I trust this skill? https://github.com/ComposioHQ/awesome-claude-skills/blob/master/apify-automation/SKILL.md" }
+    assert:
+      - type: contains-any
+        value: ["trust", "repo", "signal", "score", "activity"]
+
+  - description: "trigger-04: analyze repo"
+    vars: { query: "Analyze the repo golang/go for trust and quality" }
+    assert:
+      - type: contains-any
+        value: ["trust", "stars", "activity", "score", "repo"]
+
+  - description: "trigger-05: is this repo safe"
+    vars: { query: "Is this repo safe to depend on? expressjs/express" }
+    assert:
+      - type: contains-any
+        value: ["trust", "safe", "stars", "activity", "score"]
+
+  - description: "trigger-06: repo trust check shorthand"
+    vars: { query: "Run a repo trust check on vercel/next.js" }
+    assert:
+      - type: contains-any
+        value: ["trust", "repo", "stars", "activity", "score"]
+
+  - description: "trigger-07: evaluate dependency"
+    vars: { query: "Evaluate this dependency before I add it: lodash/lodash" }
+    assert:
+      - type: contains-any
+        value: ["trust", "repo", "stars", "activity", "score"]
+
+  - description: "trigger-08: check repo quality"
+    vars: { query: "Check the quality of https://github.com/psf/requests" }
+    assert:
+      - type: contains-any
+        value: ["trust", "quality", "stars", "activity", "score"]
+
+  - description: "trigger-09: third party trust"
+    vars: { query: "What are the trust signals for this third-party repo? django/django" }
+    assert:
+      - type: contains-any
+        value: ["trust", "signal", "stars", "activity", "score"]
+
+  - description: "trigger-10: should I adopt"
+    vars: { query: "Should I adopt this open source project? kubernetes/kubernetes" }
+    assert:
+      - type: contains-any
+        value: ["trust", "repo", "stars", "activity", "adopt"]
+
+  # ==========================================
+  # Q2: FALSE POSITIVE CONTROL (target: 100%)
+  # ==========================================
+  # 4 negative cases — should NOT trigger repo trust analysis
+
+  - description: "negative-01: secret scan"
+    vars: { query: "Scan this repo for leaked secrets" }
+    assert:
+      - type: not-contains
+        value: "trust signal"
+
+  - description: "negative-02: dependency audit"
+    vars: { query: "Check my Python dependencies for known vulnerabilities" }
+    assert:
+      - type: not-contains
+        value: "trust signal"
+
+  - description: "negative-03: code generation"
+    vars: { query: "Write a Go function to parse JSON from stdin" }
+    assert:
+      - type: not-contains
+        value: "trust signal"
+
+  - description: "negative-04: security audit"
+    vars: { query: "Run a SAST scan for SQL injection in my code" }
+    assert:
+      - type: not-contains
+        value: "trust signal"
+
+  # ==========================================
+  # Q3: WORKFLOW TESTS
+  # ==========================================
+
+  - description: "workflow-popular: popular repo gets HIGH signal"
+    vars: { query: "Check the trust signals for facebook/react" }
+    assert:
+      - type: contains-any
+        value: ["trust", "signal", "score"]
+      - type: contains-any
+        value: ["HIGH", "high", "High"]
+      - type: contains-any
+        value: ["stars", "Stars"]
+      - type: llm-rubric
+        value: "Response includes a structured trust report with categorized metrics (popularity, activity, security, maturity) and an overall trust signal assessment for the facebook/react repository"
+
+  - description: "workflow-unmaintained: unmaintained repo gets LOW or warnings"
+    vars: { query: "Check the trust signals for bitly/data_hacks" }
+    assert:
+      - type: contains-any
+        value: ["trust", "signal", "score"]
+      - type: contains-any
+        value: ["LOW", "low", "Low", "warning", "Warning", "unmaintained", "inactive"]
+      - type: llm-rubric
+        value: "Response identifies concerns about the repository such as lack of recent activity, being unmaintained or archived, or other warning signs"
+
+  # ==========================================
+  # Q4: RELIABILITY — no API errors
+  # ==========================================
+
+  - description: "reliability: no errors in standard analysis"
+    vars: { query: "Analyze trust signals for pallets/flask" }
+    assert:
+      - type: javascript
+        value: |
+          const errorPatterns = [
+            /API error/i, /rate limit/i, /timeout/i,
+            /connection refused/i, /500 internal/i,
+            /could not connect/i
+          ];
+          const hasErrors = errorPatterns.some(p => p.test(output));
+          return !hasErrors;
+
+  # ==========================================
+  # Q5: INPUT FORMAT HANDLING
+  # ==========================================
+
+  - description: "format-url: full GitHub URL parsed correctly"
+    vars: { query: "Check trust signals for https://github.com/pallets/flask" }
+    assert:
+      - type: contains-any
+        value: ["flask", "Flask", "pallets"]
+      - type: contains-any
+        value: ["trust", "signal", "score", "stars"]
+
+  - description: "format-skill-url: SKILL.md URL parsed correctly"
+    vars: { query: "Evaluate this skill: https://github.com/ComposioHQ/awesome-claude-skills/blob/master/apify-automation/SKILL.md" }
+    assert:
+      - type: contains-any
+        value: ["ComposioHQ", "awesome-claude-skills", "composio"]
+      - type: contains-any
+        value: ["trust", "signal", "score", "stars"]

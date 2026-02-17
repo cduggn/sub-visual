@@ -1,0 +1,9 @@
+{
+  "description": "Unmaintained/archived repository — expects LOW activity and warnings",
+  "target": "bitly/data_hacks",
+  "expected": {
+    "activity_score": "LOW",
+    "has_warnings": true,
+    "warning_contains": ["commit", "maintained"]
+  }
+}
