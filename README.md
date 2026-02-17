@@ -1,7 +1,5 @@
 # sub-visual
 
-Fused repository trust analyzer + SKILL.md content security checker.
-
 Two complementary security tools for evaluating open-source GitHub repositories and skill files:
 
 - **repo-check** — Analyzes GitHub repositories for trust signals across popularity, activity, security (OpenSSF Scorecard), and maturity
